@@ -1,0 +1,76 @@
+app:
+  name: "LLM Chat-bot"
+  debug: true
+
+database:
+  url: "sqlite:///./backend/data/chatbot.db"
+
+llm:
+  default_model: "mock"
+  timeout_seconds: 60
+  max_retries: 2
+  max_context_messages: 20
+  stream: true
+
+models:
+  - name: "qwen-plus"
+    provider: "openai-compatible"
+    model_id: "qwen-plus"
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    api_key_env: "DASHSCOPE_API_KEY"
+    support_stream: true
+    enabled: true
+
+  - name: "deepseek-chat"
+    provider: "openai-compatible"
+    model_id: "deepseek-chat"
+    base_url: "https://api.deepseek.com/v1"
+    api_key_env: "DEEPSEEK_API_KEY"
+    support_stream: true
+    enabled: true
+
+  - name: "gpt-4o-mini"
+    provider: "openai-compatible"
+    model_id: "gpt-4o-mini"
+    base_url: "https://api.openai.com/v1"
+    api_key_env: "OPENAI_API_KEY"
+    support_stream: true
+    enabled: true
+
+  - name: "mock"
+    provider: "mock"
+    model_id: "mock"
+    base_url: ""
+    api_key_env: ""
+    support_stream: true
+    enabled: true
+
+prompt_roles:
+  - name: "通用助手"
+    description: "适合日常问答"
+    system_prompt: "你是一个 helpful assistant，请用准确、清晰、友好的中文回答用户问题。"
+
+  - name: "编程助手"
+    description: "适合代码开发、调试和工程实践"
+    system_prompt: "你是一个专业的编程助手，回答时注重代码结构、可维护性和工程实践。"
+
+  - name: "学术论文助手"
+    description: "适合论文构思、润色和学术表达"
+    system_prompt: "你是一个严谨的学术写作助手，请用规范、客观、结构化的方式帮助用户。"
+
+  - name: "数据库教授"
+    description: "适合数据库课程学习"
+    system_prompt: "你是一位严谨的数据库课程教授，请用适合本科生理解的方式解释数据库概念。"
+
+  - name: "软件工程项目顾问"
+    description: "适合软件项目设计、计划和评审"
+    system_prompt: "你是一位软件工程项目顾问，请关注需求、架构、风险、测试和交付质量。"
+
+  - name: "简洁回答助手"
+    description: "适合需要短答案的场景"
+    system_prompt: "你是一个简洁回答助手，请优先给出直接答案，避免冗长解释。"
+
+  - name: "中文润色助手"
+    description: "适合中文表达优化"
+    system_prompt: "你是一个中文润色助手，请保持原意，优化语句流畅度、逻辑和专业感。"
+

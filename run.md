@@ -1,0 +1,59 @@
+# 运行说明
+
+## 1. 安装依赖
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r backend\requirements.txt
+```
+
+## 2. 初始化数据库
+
+```powershell
+cd backend
+python -m app.db.init_db
+```
+
+## 3. 启动后端
+
+```powershell
+cd backend
+uvicorn app.main:app --reload --port 8000
+```
+
+健康检查：
+
+```text
+http://localhost:8000/health
+```
+
+## 4. 启动前端
+
+另开一个终端：
+
+```powershell
+cd frontend
+streamlit run streamlit_app.py
+```
+
+访问：
+
+```text
+http://localhost:8501
+```
+
+## 5. 无 API Key 演示
+
+默认模型为 `mock`，无需 API Key 即可完成用户创建、会话创建、流式回复、搜索、统计和导出。
+
+## 6. 接入真实模型
+
+在 `.env` 中填写对应 Key，并在前端侧边栏选择模型：
+
+```env
+DASHSCOPE_API_KEY=...
+DEEPSEEK_API_KEY=...
+OPENAI_API_KEY=...
+```
+
