@@ -1,39 +1,38 @@
-"""langchain-chat 程序总入口。
+"""langchain-chat program entry point for the interactive Step 2 TUI."""
 
-Step 1 阶段：仅打印启动横幅，验证项目骨架可运行（零第三方依赖）。
-运行方式：uv run python src/main.py
-"""
+from __future__ import annotations
 
-import platform
-import sys
-from datetime import datetime
+import argparse
+import asyncio
 
-
-APP_NAME = "langchain-chat"
-APP_VERSION = "0.1.0"
-CURRENT_STEP = "Step 1：项目初始化与工程化配置"
+from config_manager import ConfigManager
+from ui.tui.app import TUIApplication
 
 
-def print_banner() -> None:
-    """打印启动横幅。"""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    banner = f"""
-================================================================================
-  {APP_NAME}  v{APP_VERSION}
-================================================================================
-  Python 版本  : {platform.python_version()}   ({sys.version.split()[0]})
-  运行平台     : {platform.system()} {platform.machine()}
-  启动时间     : {now}
-  当前进度     : {CURRENT_STEP}
-================================================================================
-"""
-    print(banner)
-    print(f"[完成] {APP_NAME} 项目已启动（{CURRENT_STEP}）")
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="langchain-chat TUI")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="render the Step 2 menu once and exit without waiting for input",
+    )
+    return parser.parse_args()
+
+
+async def run_application(check_only: bool = False) -> None:
+    manager = ConfigManager()
+    config = manager.load()
+    app = TUIApplication(config, manager)
+    if check_only:
+        app.render_snapshot()
+        app.show_message("Step 2 TUI 骨架验证通过。", title="MVP 检查")
+        return
+    await app.run()
 
 
 def main() -> None:
-    """程序主函数。"""
-    print_banner()
+    args = parse_args()
+    asyncio.run(run_application(check_only=args.check))
 
 
 if __name__ == "__main__":

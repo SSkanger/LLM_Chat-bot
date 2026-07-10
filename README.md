@@ -4,16 +4,17 @@
 
 本项目按老师的工程化步骤推进，每一步均提供可运行、可验证的 MVP，并使用 Git commit 与 tag 保存回退点。当前仓库同时保留已实现的 FastAPI、Streamlit、SQLite 聊天系统。
 
-## Step 1 验收
+## Step 2 验收
 
 环境要求：Python 3.12（要求 3.10 及以上）和 uv。
 
 ```powershell
 uv sync
+uv run python src/main.py --check
 uv run python src/main.py
 ```
 
-启动入口应打印项目名、版本、Python 版本、运行平台、启动时间和当前步骤。Step 1 入口仅使用 Python 标准库，`pyproject.toml` 的依赖列表保持为空。
+`--check` 会渲染一次主菜单后退出；不带参数时进入可交互 TUI。Step 2 已完成数据模型、异步存储抽象、配置管理、UI 协议和五项主菜单骨架，具体业务入口将在后续步骤实现。
 
 ## 功能
 
@@ -51,6 +52,11 @@ config/
 src/
   __init__.py
   main.py
+  config_manager.py
+  models/
+  storage/
+  interface/
+  ui/tui/
 docs/
   需求说明文档.md
   实施步骤计划.md
