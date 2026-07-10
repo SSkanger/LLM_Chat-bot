@@ -4,7 +4,7 @@
 
 本项目按老师的工程化步骤推进，每一步均提供可运行、可验证的 MVP，并使用 Git commit 与 tag 保存回退点。当前仓库同时保留已实现的 FastAPI、Streamlit、SQLite 聊天系统。
 
-## Step 3 验收
+## Step 4 验收
 
 环境要求：Python 3.12（要求 3.10 及以上）和 uv。
 
@@ -15,7 +15,7 @@ uv run python src/main.py --check
 uv run python src/main.py
 ```
 
-数据库初始化命令会创建 `data/sqlite/app.db`、执行版本化迁移并幂等写入系统预设。`--check` 会渲染一次主菜单后退出；不带参数时进入可交互 TUI。具体用户菜单业务将在 Step 4 实现。
+数据库初始化命令会创建 `data/sqlite/app.db`、执行版本化迁移并幂等写入系统预设。`--check` 会渲染一次主菜单后退出；不带参数时进入可交互 TUI。用户管理菜单已经支持创建、切换和二次确认删除，用户及其关联数据持久化并严格隔离。
 
 ## 功能
 
@@ -54,6 +54,8 @@ src/
   __init__.py
   main.py
   config_manager.py
+  core/
+    user_manager.py
   models/
   storage/
     sqlite_backend.py

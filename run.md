@@ -9,6 +9,14 @@ uv run python scripts/init_db.py
 
 默认数据库位于 `data/sqlite/app.db`。脚本会自动创建目录、执行迁移、创建全部业务表并写入内置 Prompt 预设；重复执行不会重复创建表或预设。
 
+## Step 4：使用 TUI 用户管理
+
+```powershell
+uv run python src/main.py
+```
+
+进入主菜单后选择 `1 用户管理`，可以创建、切换和删除用户。删除操作需要二次确认，并会删除该用户的会话、消息、个人预设和配置。
+
 ## 1. 安装依赖
 
 ```powershell

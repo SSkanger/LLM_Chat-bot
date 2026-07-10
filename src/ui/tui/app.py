@@ -1,4 +1,4 @@
-"""Interactive terminal application skeleton for Step 2."""
+"""Interactive terminal application with Step 4 user management."""
 
 from __future__ import annotations
 
@@ -10,7 +10,9 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 
 from config_manager import ConfigManager, ProjectConfig
+from core.user_manager import UserManager, UserManagerError
 from interface.ui_protocol import AbstractUI
+from storage.base import StorageBackend
 from ui.tui.chat_view import ChatView
 from ui.tui.menu_view import MenuView
 from ui.tui.widgets import TUIWidgets
@@ -21,10 +23,13 @@ class TUIApplication(AbstractUI):
         self,
         config: ProjectConfig,
         config_manager: ConfigManager,
+        storage: StorageBackend,
         console: Console | None = None,
     ) -> None:
         self.config = config
         self.config_manager = config_manager
+        self.storage = storage
+        self.user_manager = UserManager(storage, config.llm.default_model)
         self.widgets = TUIWidgets(console)
         self.console = self.widgets.console
         self.menu = MenuView(self.widgets)
@@ -40,7 +45,15 @@ class TUIApplication(AbstractUI):
         return self._input_session
 
     def render_snapshot(self) -> None:
-        self.widgets.render_header(self.config.app.name, self.config.app.version, self.config.app.env)
+        current_username = (
+            self.user_manager.current_user.username if self.user_manager.current_user else "未选择"
+        )
+        self.widgets.render_header(
+            self.config.app.name,
+            self.config.app.version,
+            self.config.app.env,
+            current_username,
+        )
         self.menu.render()
 
     async def run(self) -> None:
@@ -56,24 +69,86 @@ class TUIApplication(AbstractUI):
             self.running = False
             self.show_message("已退出 langchain-chat。", title="再见")
             return
+        if choice == "1":
+            await self._user_management_loop()
+            return
         if choice == "4":
             self.chat.render_stub()
         elif choice == "5":
             self._show_settings()
         else:
-            titles = {"1": "用户管理", "2": "会话管理", "3": "预设管理"}
+            titles = {"2": "会话管理", "3": "预设管理"}
             title = titles.get(choice, "功能")
             self.show_message(f"{title}入口已建立，业务功能将在后续对应步骤实现。", title=title)
         await self._pause()
 
     def _show_settings(self) -> None:
+        current_user = (
+            self.user_manager.current_user.username if self.user_manager.current_user else "未选择"
+        )
         message = (
             f"运行环境：{self.config.app.env}\n"
+            f"当前用户：{current_user}\n"
             f"默认模型：{self.config.llm.default_model}\n"
             f"存储后端：{self.config.storage.type}\n"
             f"内置预设：{len(self.config_manager.load_presets())} 个"
         )
         self.show_message(message, title="设置")
+
+    async def _user_management_loop(self) -> None:
+        while self.running:
+            self.console.clear()
+            current_username = (
+                self.user_manager.current_user.username if self.user_manager.current_user else "未选择"
+            )
+            self.widgets.render_header(
+                self.config.app.name,
+                self.config.app.version,
+                self.config.app.env,
+                current_username,
+            )
+            users = await self.user_manager.list_users()
+            self.menu.render_user_menu(users, self.user_manager.current_user)
+            action = await self.menu.choose_user_action()
+            if action == "0":
+                return
+            try:
+                if action == "1":
+                    await self._create_user()
+                elif action == "2":
+                    await self._switch_user()
+                elif action == "3":
+                    await self._delete_user()
+            except (UserManagerError, ValueError) as exc:
+                self.show_error(str(exc))
+            await self._pause()
+
+    async def _create_user(self) -> None:
+        username = (await self.prompt("请输入新用户名 > ")).strip()
+        user = await self.user_manager.create_user(username)
+        self.show_message(f"用户“{user.username}”创建成功。", title="创建用户")
+
+    async def _switch_user(self) -> None:
+        identifier = (await self.prompt("请输入用户 ID 或用户名 > ")).strip()
+        user = await self.user_manager.switch_user(identifier)
+        sessions = await self.user_manager.list_current_user_sessions()
+        self.show_message(
+            f"已切换到“{user.username}”，该用户当前有 {len(sessions)} 个会话。",
+            title="切换用户",
+        )
+
+    async def _delete_user(self) -> None:
+        identifier = (await self.prompt("请输入要删除的用户 ID 或用户名 > ")).strip()
+        user = await self.user_manager.resolve_user(identifier)
+        confirmation = await self.select(
+            f"删除“{user.username}”及其全部会话、消息、预设和配置，确认吗",
+            ("是", "否"),
+        )
+        if confirmation != "是":
+            self.show_message("已取消删除。", title="删除用户")
+            return
+        deleted = await self.user_manager.delete_user(user.id or identifier)
+        self.show_message(f"用户“{deleted.username}”及关联数据已删除。", title="删除用户")
 
     async def _pause(self) -> None:
         try:

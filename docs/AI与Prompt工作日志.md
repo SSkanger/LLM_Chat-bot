@@ -18,3 +18,12 @@
 - MVP 决策：初始化脚本自动创建全部表并幂等写入内置预设；Step4 才接入用户管理菜单。
 - 验证命令：`uv run python scripts/init_db.py`、`uv run pytest`、`uv run ruff check src scripts tests`。
 - 计划标签：`step-3-sqlite`。
+
+## Step 4：用户管理与 TUI 菜单
+
+- 用户 Prompt：根据老师要求的 Step4 修改项目，并将修改后的项目直接 Git 提交。
+- 需求来源：老师《实施步骤计划》v1.2 的 Step 4 和需求 B1-B4。
+- 实现范围：UserManager、TUI 用户子菜单、创建/切换/二次确认删除、当前用户上下文。
+- 隔离策略：会话、预设、配置均通过当前用户 ID 查询；SQLite 外键负责删除关联数据。
+- 验证命令：`uv run pytest`、`uv run python src/main.py --check`、真实 TUI 按键流程。
+- 计划标签：`step-4-user-mgmt`。
