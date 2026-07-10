@@ -1,5 +1,14 @@
 # 运行说明
 
+## Step 3：初始化异步 SQLite 数据库
+
+```powershell
+uv sync
+uv run python scripts/init_db.py
+```
+
+默认数据库位于 `data/sqlite/app.db`。脚本会自动创建目录、执行迁移、创建全部业务表并写入内置 Prompt 预设；重复执行不会重复创建表或预设。
+
 ## 1. 安装依赖
 
 ```powershell
@@ -56,4 +65,3 @@ DASHSCOPE_API_KEY=...
 DEEPSEEK_API_KEY=...
 OPENAI_API_KEY=...
 ```
-

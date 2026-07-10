@@ -27,8 +27,16 @@ class StorageBackend(ABC):
         """Return a user by primary key."""
 
     @abstractmethod
+    async def get_user_by_username(self, username: str) -> User | None:
+        """Return a user by unique username."""
+
+    @abstractmethod
     async def list_users(self) -> list[User]:
         """Return all users."""
+
+    @abstractmethod
+    async def update_user(self, user: User) -> User:
+        """Persist user preference changes."""
 
     @abstractmethod
     async def delete_user(self, user_id: int) -> bool:
@@ -63,6 +71,14 @@ class StorageBackend(ABC):
         """Return messages in chronological order."""
 
     @abstractmethod
+    async def update_message(self, message: Message) -> Message:
+        """Persist message changes."""
+
+    @abstractmethod
+    async def delete_message(self, message_id: int) -> bool:
+        """Delete one message."""
+
+    @abstractmethod
     async def create_preset(self, preset: Preset) -> Preset:
         """Persist and return a preset."""
 
@@ -85,3 +101,11 @@ class StorageBackend(ABC):
     @abstractmethod
     async def set_user_config(self, config: UserConfig) -> UserConfig:
         """Create or update a user preference."""
+
+    @abstractmethod
+    async def list_user_configs(self, user_id: int) -> list[UserConfig]:
+        """Return all preferences for a user."""
+
+    @abstractmethod
+    async def delete_user_config(self, user_id: int, key: str) -> bool:
+        """Delete one user preference."""

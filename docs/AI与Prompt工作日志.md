@@ -9,3 +9,12 @@
 - 兼容性决策：保留现有 FastAPI/Streamlit 代码；将其依赖纳入 pyproject，避免 uv 同步后破坏 Web 应用环境。
 - 验证命令：`uv run python src/main.py --check`、`uv run pytest`。
 - 计划标签：`step-2-skeleton`。
+
+## Step 3：SQLite 后端与数据库初始化
+
+- 用户 Prompt：根据老师要求的 Step3 修改项目，并将修改后的项目直接 Git 提交。
+- 需求来源：老师《实施步骤计划》v1.2 的 Step 3。
+- 实现范围：aiosqlite 后端、完整异步 CRUD、存储工厂、版本化迁移和初始化脚本。
+- MVP 决策：初始化脚本自动创建全部表并幂等写入内置预设；Step4 才接入用户管理菜单。
+- 验证命令：`uv run python scripts/init_db.py`、`uv run pytest`、`uv run ruff check src scripts tests`。
+- 计划标签：`step-3-sqlite`。

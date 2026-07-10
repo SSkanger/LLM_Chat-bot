@@ -43,7 +43,7 @@ class TUIWidgets:
         return self._session
 
     def render_header(self, app_name: str, version: str, environment: str) -> None:
-        subtitle = f"v{version} | 环境: {environment} | Step 2"
+        subtitle = f"v{version} | 环境: {environment} | Step 3"
         self.console.print(Panel.fit(f"[bold cyan]{app_name}[/bold cyan]\n{subtitle}", border_style="cyan"))
 
     def render_menu(self, items: Sequence[MenuItem] = MAIN_MENU_ITEMS) -> None:

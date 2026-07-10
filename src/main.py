@@ -25,7 +25,7 @@ async def run_application(check_only: bool = False) -> None:
     app = TUIApplication(config, manager)
     if check_only:
         app.render_snapshot()
-        app.show_message("Step 2 TUI 骨架验证通过。", title="MVP 检查")
+        app.show_message("Step 3 配置与 TUI 骨架加载正常。", title="MVP 检查")
         return
     await app.run()
 
