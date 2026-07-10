@@ -1,6 +1,19 @@
-# LLM Chat-bot
+# LangChain Chat / LLM Chat-bot
 
-一个基于 FastAPI、Streamlit、SQLite、SQLAlchemy 和 LangChain 封装的本地化智能对话系统。项目支持多用户、多会话、多模型切换、Prompt 角色切换、流式输出、会话搜索、统计、导出、结构化日志和配置化模型接入。
+> 基于 LangChain 的多轮会话系统（教学项目）
+
+本项目按老师的工程化步骤推进，每一步均提供可运行、可验证的 MVP，并使用 Git commit 与 tag 保存回退点。当前仓库同时保留已实现的 FastAPI、Streamlit、SQLite 聊天系统。
+
+## Step 1 验收
+
+环境要求：Python 3.12（要求 3.10 及以上）和 uv。
+
+```powershell
+uv sync
+uv run python src/main.py
+```
+
+启动入口应打印项目名、版本、Python 版本、运行平台、启动时间和当前步骤。Step 1 入口仅使用 Python 标准库，`pyproject.toml` 的依赖列表保持为空。
 
 ## 功能
 
@@ -23,10 +36,27 @@
 - 前端：Streamlit、Requests、Pandas
 - 数据库：SQLite
 - 配置：`config.yaml`、`.env`
+- 工程管理：uv、Git、pytest、ruff
 
 ## 目录结构
 
 ```text
+pyproject.toml
+uv.lock
+.env.example
+config.yaml
+config/
+  presets.yaml
+  logging.yaml
+src/
+  __init__.py
+  main.py
+docs/
+  需求说明文档.md
+  实施步骤计划.md
+  需求变更与扩展登记.md
+  Git命令与操作教学.md
+  uv包管理器教学文档.md
 backend/
   app/
     api/
@@ -44,17 +74,14 @@ frontend/
   pages/
   api_client.py
   streamlit_app.py
-config.yaml
-.env.example
 run.md
 ```
 
 ## 安装
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r backend\requirements.txt
+uv venv .venv --python 3.12
+uv pip install -r backend\requirements.txt
 ```
 
 ## 配置
@@ -127,4 +154,15 @@ pytest
 - 将 SQLite 搜索升级为 FTS5 或向量检索。
 - 增加正式登录、OAuth 或学校统一认证。
 - 增加会话摘要、Token 费用统计、Docker 部署和管理员后台。
+- 按 `docs/实施步骤计划.md` 在 Step 15 完成 dev/test/prod 多环境隔离。
 
+## 配置分层
+
+| 层 | 文件 | 内容 | 是否提交 |
+|---|---|---|---|
+| 敏感配置 | `.env` | API Key、数据库密码 | 否 |
+| 业务配置 | `config.yaml` | 模型、存储、超时等 | 是 |
+| 日志配置 | `config/logging.yaml` | 日志格式与级别 | 是 |
+| 业务数据 | `config/presets.yaml` | 系统内置预设角色 | 是 |
+
+完整实施计划和工程说明位于 `docs/` 目录。

@@ -1,6 +1,15 @@
+# config.yaml - langchain-chat global business configuration
+#
+# Multi-environment extension point (REQ-001 / Step 15):
+#   This is the shared base configuration. Future environment-specific files
+#   config.dev.yaml, config.test.yaml and config.prod.yaml override it according
+#   to APP_ENV. Step 1 keeps the application in single-environment mode.
+
 app:
   name: "LLM Chat-bot"
+  version: "0.1.0"
   debug: true
+  # env: dev
 
 database:
   url: "sqlite:///./backend/data/chatbot.db"
@@ -8,9 +17,31 @@ database:
 llm:
   default_model: "mock"
   timeout_seconds: 60
+  timeout: 30
   max_retries: 2
   max_context_messages: 20
   stream: true
+
+# Step 1 pluggable storage design. The current web implementation reads the
+# database.url compatibility field above; later steps can switch by storage.type.
+storage:
+  type: sqlite
+  sqlite:
+    path: data/sqlite/app.db
+  mysql:
+    host: localhost
+    port: 3306
+    user: root
+    database: langchain_chat
+  file:
+    path: data/filestore
+
+session:
+  title_max_length: 30
+
+export:
+  dir: data/users/{username}/exports
+  filename_template: "{title}_{date}.md"
 
 models:
   - name: "qwen-plus"
@@ -73,4 +104,3 @@ prompt_roles:
   - name: "中文润色助手"
     description: "适合中文表达优化"
     system_prompt: "你是一个中文润色助手，请保持原意，优化语句流畅度、逻辑和专业感。"
-

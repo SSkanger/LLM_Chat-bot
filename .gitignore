@@ -1,11 +1,60 @@
+# 1. Python virtual environments
 .venv/
+venv/
+env/
+ENV/
+.python-version
+
+# 2. Python bytecode and build output
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.tmp/
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+
+# 3. Sensitive configuration
 .env
+.env.local
+.env.dev
+.env.test
+.env.prod
+!.env.example
+
+# 4. Runtime data and logs
+data/
+logs/
+*.log
+*.sqlite
+*.db
+*.db-*
 backend/data/*.db
 backend/data/*.db-*
 backend/logs/*.log
 backend/logs/*.jsonl
+
+# 5. Tests and coverage
+.pytest_cache/
+pytest-cache-files-*/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# 6. IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
 .streamlit/
+
+# 7. Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*~
+
+# 8. Local tool caches
+.tmp/
