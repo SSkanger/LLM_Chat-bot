@@ -1,4 +1,4 @@
-"""langchain-chat program entry point for the interactive Step 4 TUI."""
+"""langchain-chat program entry point for the interactive Step 5 TUI."""
 
 from __future__ import annotations
 
@@ -27,9 +27,10 @@ async def run_application(check_only: bool = False) -> None:
     await storage.initialize()
     try:
         app = TUIApplication(config, manager, storage)
+        await app.preset_manager.ensure_builtin_presets(manager.load_presets())
         if check_only:
             app.render_snapshot()
-            app.show_message("Step 4 用户管理与 TUI 路由加载正常。", title="MVP 检查")
+            app.show_message("Step 5 预设管理与 TUI 路由加载正常。", title="MVP 检查")
             return
         await app.run()
     finally:

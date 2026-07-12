@@ -27,3 +27,12 @@
 - 隔离策略：会话、预设、配置均通过当前用户 ID 查询；SQLite 外键负责删除关联数据。
 - 验证命令：`uv run pytest`、`uv run python src/main.py --check`、真实 TUI 按键流程。
 - 计划标签：`step-4-user-mgmt`。
+
+## Step 5：预设 Prompt 管理
+
+- 用户 Prompt：根据老师要求的 Step5 修改项目，并将修改后的项目直接 Git 提交。
+- 需求来源：老师《实施步骤计划》v1.2 的 Step 5 和需求 D1-D4。
+- 实现范围：PresetManager、内置预设加载、个人预设 CRUD、选择/清除选择、TUI 子菜单。
+- 权限策略：系统预设全局共享且只读；个人预设只允许所属用户查看和修改。
+- 验证命令：`uv run pytest`、`uv run python src/main.py --check`、真实 TUI 预设流程。
+- 计划标签：`step-5-presets`。

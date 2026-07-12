@@ -23,7 +23,7 @@ class MenuItem:
 MAIN_MENU_ITEMS: tuple[MenuItem, ...] = (
     MenuItem("1", "用户管理", "创建、切换和删除用户"),
     MenuItem("2", "会话管理", "浏览和管理历史会话（Step 8 实现）"),
-    MenuItem("3", "预设管理", "查看和选择 Prompt 角色（Step 5 实现）"),
+    MenuItem("3", "预设管理", "浏览、管理和选择 Prompt 角色"),
     MenuItem("4", "开始对话", "进入多轮流式对话（Step 7 实现）"),
     MenuItem("5", "设置", "查看模型、存储和运行环境"),
     MenuItem("0", "退出", "结束程序"),
@@ -49,7 +49,7 @@ class TUIWidgets:
         environment: str,
         current_user: str = "未选择",
     ) -> None:
-        subtitle = f"v{version} | 环境: {environment} | 用户: {current_user} | Step 4"
+        subtitle = f"v{version} | 环境: {environment} | 用户: {current_user} | Step 5"
         self.console.print(Panel.fit(f"[bold cyan]{app_name}[/bold cyan]\n{subtitle}", border_style="cyan"))
 
     def render_menu(self, items: Sequence[MenuItem] = MAIN_MENU_ITEMS) -> None:

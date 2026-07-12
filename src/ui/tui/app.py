@@ -1,4 +1,4 @@
-"""Interactive terminal application with Step 4 user management."""
+"""Interactive terminal application with Step 5 preset management."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 
 from config_manager import ConfigManager, ProjectConfig
+from core.preset_manager import PresetManager, PresetManagerError
 from core.user_manager import UserManager, UserManagerError
 from interface.ui_protocol import AbstractUI
 from storage.base import StorageBackend
@@ -30,6 +31,7 @@ class TUIApplication(AbstractUI):
         self.config_manager = config_manager
         self.storage = storage
         self.user_manager = UserManager(storage, config.llm.default_model)
+        self.preset_manager = PresetManager(storage, self.user_manager)
         self.widgets = TUIWidgets(console)
         self.console = self.widgets.console
         self.menu = MenuView(self.widgets)
@@ -72,12 +74,15 @@ class TUIApplication(AbstractUI):
         if choice == "1":
             await self._user_management_loop()
             return
+        if choice == "3":
+            await self._preset_management_loop()
+            return
         if choice == "4":
             self.chat.render_stub()
         elif choice == "5":
             self._show_settings()
         else:
-            titles = {"2": "会话管理", "3": "预设管理"}
+            titles = {"2": "会话管理"}
             title = titles.get(choice, "功能")
             self.show_message(f"{title}入口已建立，业务功能将在后续对应步骤实现。", title=title)
         await self._pause()
@@ -94,6 +99,84 @@ class TUIApplication(AbstractUI):
             f"内置预设：{len(self.config_manager.load_presets())} 个"
         )
         self.show_message(message, title="设置")
+
+    async def _preset_management_loop(self) -> None:
+        while self.running:
+            self.console.clear()
+            current_username = (
+                self.user_manager.current_user.username if self.user_manager.current_user else "未选择"
+            )
+            self.widgets.render_header(
+                self.config.app.name,
+                self.config.app.version,
+                self.config.app.env,
+                current_username,
+            )
+            presets = await self.preset_manager.list_visible_presets()
+            selected = await self.preset_manager.get_selected_preset()
+            self.menu.render_preset_menu(
+                presets,
+                selected,
+                has_user=self.user_manager.current_user is not None,
+            )
+            action = await self.menu.choose_preset_action()
+            if action == "0":
+                return
+            if self.user_manager.current_user is None:
+                self.show_error("请先创建或切换用户")
+                await self._pause()
+                continue
+            try:
+                if action == "1":
+                    await self._create_preset()
+                elif action == "2":
+                    await self._edit_preset()
+                elif action == "3":
+                    await self._delete_preset()
+                elif action == "4":
+                    await self._select_preset()
+                elif action == "5":
+                    await self.preset_manager.select_preset(None)
+                    self.show_message("当前会话角色已设为不使用预设。", title="预设选择")
+            except (PresetManagerError, UserManagerError, ValueError) as exc:
+                self.show_error(str(exc))
+            await self._pause()
+
+    async def _create_preset(self) -> None:
+        name = await self.prompt("预设名称 > ")
+        description = await self.prompt("预设说明 > ")
+        system_prompt = await self.prompt("System Prompt > ")
+        preset = await self.preset_manager.create_custom_preset(name, description, system_prompt)
+        self.show_message(f"个人预设“{preset.name}”创建成功。", title="新增预设")
+
+    async def _edit_preset(self) -> None:
+        preset_id = await self.prompt("请输入要编辑的个人预设 ID > ")
+        preset = await self.preset_manager.resolve_visible_preset(preset_id)
+        name = await self.prompt(f"名称（回车保留“{preset.name}”）> ")
+        description = await self.prompt("说明（回车保留原值）> ")
+        system_prompt = await self.prompt("System Prompt（回车保留原值）> ")
+        updated = await self.preset_manager.update_custom_preset(
+            preset_id,
+            name=name or None,
+            description=description if description else None,
+            system_prompt=system_prompt or None,
+        )
+        self.show_message(f"个人预设“{updated.name}”已更新。", title="编辑预设")
+
+    async def _delete_preset(self) -> None:
+        preset_id = await self.prompt("请输入要删除的个人预设 ID > ")
+        preset = await self.preset_manager.resolve_visible_preset(preset_id)
+        confirmation = await self.select(f"确认删除预设“{preset.name}”吗", ("是", "否"))
+        if confirmation != "是":
+            self.show_message("已取消删除。", title="删除预设")
+            return
+        deleted = await self.preset_manager.delete_custom_preset(preset_id)
+        self.show_message(f"个人预设“{deleted.name}”已删除。", title="删除预设")
+
+    async def _select_preset(self) -> None:
+        preset_id = await self.prompt("请输入要使用的预设 ID > ")
+        selected = await self.preset_manager.select_preset(preset_id)
+        self.show_message(f"已选择预设“{selected.name}”。", title="预设选择")
 
     async def _user_management_loop(self) -> None:
         while self.running:

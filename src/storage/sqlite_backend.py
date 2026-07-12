@@ -323,6 +323,10 @@ class SQLiteBackend(StorageBackend):
         await connection.commit()
         return preset.model_copy(update={"id": cursor.lastrowid})
 
+    async def get_preset(self, preset_id: int) -> Preset | None:
+        row = await self._fetchone("SELECT * FROM presets WHERE id = ?", (preset_id,))
+        return self._preset_from_row(row) if row else None
+
     async def list_presets(self, user_id: int | None = None) -> list[Preset]:
         if user_id is None:
             rows = await self._fetchall(

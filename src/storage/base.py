@@ -83,6 +83,10 @@ class StorageBackend(ABC):
         """Persist and return a preset."""
 
     @abstractmethod
+    async def get_preset(self, preset_id: int) -> Preset | None:
+        """Return one preset by primary key."""
+
+    @abstractmethod
     async def list_presets(self, user_id: int | None = None) -> list[Preset]:
         """Return built-in presets plus optional user presets."""
 
