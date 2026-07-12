@@ -49,7 +49,7 @@ class TUIWidgets:
         environment: str,
         current_user: str = "未选择",
     ) -> None:
-        subtitle = f"v{version} | 环境: {environment} | 用户: {current_user} | Step 5"
+        subtitle = f"v{version} | 环境: {environment} | 用户: {current_user} | Step 6"
         self.console.print(Panel.fit(f"[bold cyan]{app_name}[/bold cyan]\n{subtitle}", border_style="cyan"))
 
     def render_menu(self, items: Sequence[MenuItem] = MAIN_MENU_ITEMS) -> None:

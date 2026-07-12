@@ -21,6 +21,14 @@ uv run python src/main.py
 
 先创建或切换用户，再在主菜单选择 `3 预设管理`。系统内置预设对所有用户可见且不可修改；个人预设支持新增、编辑、删除、选择，也可以选择“不使用预设”。
 
+## Step 6：独立运行对话引擎
+
+```powershell
+uv run python scripts/chat_engine_demo.py
+```
+
+未配置 API Key 时自动使用本地 mock，仍可验证多轮 Memory、异步流式输出和 Token 统计。配置 `.env` 的 `API_BASE_URL`、`API_KEY`、`MODEL_NAME` 后可调用真实 OpenAI 兼容模型。
+
 ## 1. 安装依赖
 
 ```powershell

@@ -4,18 +4,19 @@
 
 本项目按老师的工程化步骤推进，每一步均提供可运行、可验证的 MVP，并使用 Git commit 与 tag 保存回退点。当前仓库同时保留已实现的 FastAPI、Streamlit、SQLite 聊天系统。
 
-## Step 5 验收
+## Step 6 验收
 
 环境要求：Python 3.12（要求 3.10 及以上）和 uv。
 
 ```powershell
 uv sync
 uv run python scripts/init_db.py
+uv run python scripts/chat_engine_demo.py
 uv run python src/main.py --check
 uv run python src/main.py
 ```
 
-数据库初始化命令会创建 `data/sqlite/app.db`、执行版本化迁移并幂等写入系统预设。`--check` 会渲染一次主菜单后退出；不带参数时进入可交互 TUI。预设菜单支持查看共享内置预设、管理隔离的个人预设，以及选择预设或不使用预设。
+数据库初始化命令会创建 SQLite 表并加载系统预设。对话引擎演示脚本会使用真实 OpenAI 兼容配置或本地 mock，完成两轮异步流式对话并输出 Token 用量。Step7 才会把引擎接入 TUI 的“开始对话”。
 
 ## 功能
 
@@ -57,6 +58,7 @@ src/
   core/
     user_manager.py
     preset_manager.py
+    chat_engine.py
   models/
   storage/
     sqlite_backend.py

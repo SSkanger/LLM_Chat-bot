@@ -36,3 +36,13 @@
 - 权限策略：系统预设全局共享且只读；个人预设只允许所属用户查看和修改。
 - 验证命令：`uv run pytest`、`uv run python src/main.py --check`、真实 TUI 预设流程。
 - 计划标签：`step-5-presets`。
+
+## Step 6：核心对话引擎
+
+- 用户 Prompt：根据老师要求的 Step6 修改项目，并将修改后的项目直接 Git 提交。
+- 需求来源：老师《实施步骤计划》v1.2 的 Step 6。
+- 实现范围：ChatOpenAI、Memory、多轮异步流式输出、超时重试、Token 统计和 mock 演示。
+- 兼容决策：当前 LangChain 使用 `InMemoryChatMessageHistory` 代替旧版 `ConversationBufferMemory`，能力等价且 API 可用。
+- 重试策略：首块前失败可重试；已有部分输出时不重试，避免用户看到重复内容。
+- 验证命令：`uv run python scripts/chat_engine_demo.py`、`uv run pytest`、`uv run ruff check src scripts tests`。
+- 计划标签：`step-6-chat-engine`。

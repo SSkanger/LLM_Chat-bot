@@ -12,14 +12,19 @@ from core.preset_manager import (
     PresetManager,
     PresetNotFoundError,
 )
+from core.chat_engine import ChatEngine, ChatEngineError, ChatResponse, TokenUsage
 
 __all__ = [
     "DuplicateUsernameError",
     "BuiltinPresetProtectedError",
+    "ChatEngine",
+    "ChatEngineError",
+    "ChatResponse",
     "DuplicatePresetNameError",
     "NoActiveUserError",
     "PresetManager",
     "PresetNotFoundError",
+    "TokenUsage",
     "UserManager",
     "UserNotFoundError",
 ]
